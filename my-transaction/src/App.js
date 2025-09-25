@@ -1,14 +1,36 @@
-import React from 'react';
-// import React, {Component} from 'react';
-import {BrowserRouter, Switch, Route} from "react-router-dom";
-// import { Row, Col, Container } from 'react-bootstrap';
-// import { Hasil, ListCategory, Menus, NavbarComp } from './component';
-import { NavbarComp } from './component';
-import { Home, Sukses } from './pages'
-import RekapTransaksi from './pages/RekapTransaksi';
-// import { API_URL } from './utils/constants';
-// import axios from 'axios';
-// import swal from 'sweetalert';
+// // import './App.css';
+// import React, { Component } from "react";
+// // import NavbarComp from './component/NavbarComp';
+// import { Row, Col, Container } from "react-bootstrap";
+// // import ListCategory from './component/ListCategory'
+// // import Hasil from './component/Hasil';
+// import { Hasil, ListCategory, Menus, NavbarComp } from "./component";
+// import { API_URL } from "./utils/constants";
+// import axios from "axios";
+// import swal from "sweetalert";
+import { BrowserRouter, Route, Switch } from "react-router-dom/cjs/react-router-dom.min";
+import { NavbarComp } from "./component";
+import { Home } from "./pages/index";
+import { Sukses} from "./pages/index";
+import { RekapTransaksi } from "./pages/index";
+import { Stok } from "./pages/index";
+
+function App(){
+  return (
+    <BrowserRouter>
+      <NavbarComp />
+    <main>
+      <Switch>
+        <Route path="/" component={Home} exact/>
+        <Route path="/Sukses" component={Sukses} exact/>
+        <Route path="/RekapTransaksi" component={RekapTransaksi} exact/>
+        <Route path="/Stok" component={Stok} exact/>
+      </Switch>
+    </main>
+    </BrowserRouter>
+  );
+}
+export default App;
 
 // export default class App extends Component {
 //   constructor(props) {
@@ -16,15 +38,14 @@ import RekapTransaksi from './pages/RekapTransaksi';
 
 //     this.state = {
 //       menus: [],
-//       categoriYangDipilih: "Makanan", // default kategori awal
+//       categoryYangDipilih: "Makanan",
 //       keranjangs: [],
 //     };
 //   }
 
 //   componentDidMount() {
-//     // ambil produk pertama kali sesuai kategori default
 //     axios
-//       .get(API_URL + "product?category.nama=" + this.state.categoriYangDipilih)
+//       .get(API_URL + "product?category.nama=" + this.state.categoryYangDipilih)
 //       .then((res) => {
 //         const menus = res.data;
 //         this.setState({ menus });
@@ -33,7 +54,6 @@ import RekapTransaksi from './pages/RekapTransaksi';
 //         console.log(error);
 //       });
 
-//     // ambil keranjang
 //     axios
 //       .get(API_URL + "keranjangs")
 //       .then((res) => {
@@ -44,10 +64,39 @@ import RekapTransaksi from './pages/RekapTransaksi';
 //         console.log(error);
 //       });
 //   }
+//   //ambil daftar keranjang
+//   getListKeranjang = () => {
+//     axios
+//       .get(API_URL + "keranjangs")
+//       .then((res) => {
+//         this.setState({ keranjangs: res.data });
+//       })
+//       .catch((error) => {
+//         console.log(error);
+//       });
+//   };
+//   //hapus keranjang
+//   hapusKeranjang = (id) => {
+//   axios
+//     .delete(API_URL + "keranjangs/" + id)
+//     .then(() => {
+//       swal({
+//         title: "Terhapus!",
+//         text: "Produk berhasil dihapus dari keranjang",
+//         icon: "error",
+//         button: false,
+//         timer: 1000,
+//       });
+//       this.getListKeranjang(); // refresh data setelah hapus
+//     })
+//     .catch((error) => {
+//       console.log(error);
+//     });
+// };
 
 //   changeCategory = (value) => {
 //     this.setState({
-//       categoriYangDipilih: value, // konsisten pakai yg sama
+//       categoryYangDipilih: value,
 //       menus: [],
 //     });
 
@@ -67,108 +116,119 @@ import RekapTransaksi from './pages/RekapTransaksi';
 //       .get(API_URL + "keranjangs?product.id=" + value.id)
 //       .then((res) => {
 //         if (res.data.length === 0) {
-//           // produk belum ada di keranjang → tambah baru
-//           const keranjang = {
-//             jumlah: 1,
-//             total_harga: value.harga,
-//             product: value,
-//           };
+//         const keranjang = {
+//           jumlah: 1,
+//           total_harga: value.harga,
+//           product: value,
+//         };
 
-//           axios
-//             .post(API_URL + "keranjangs", keranjang)
-//             .then(() => {
-//               swal({
-//                 title: "Sukses !",
-//                 text: "Sukses Masuk Keranjang! " + keranjang.product.nama,
-//                 icon: "success",
-//                 button: false,
-//                 timer: 1000,
-//               });
-//             })
-//             .catch((error) => {
-//               console.log(error);
+//         axios
+//           .post(API_URL + "keranjangs", keranjang)
+//           .then(() => {
+//             swal({
+//               title: "Sukses !",
+//               text: "Sukses Masuk Keranjang! " + keranjang.product.nama,
+//               icon: "success",
+//               button: false,
+//               timer: 1000,
 //             });
-//         } else {
-//           // produk sudah ada di keranjang → update jumlah
-//           const keranjang = {
-//             jumlah: res.data[0].jumlah + 1,
-//             total_harga: res.data[0].total_harga + value.harga,
-//             product: value,
-//           };
 
-//           axios
-//             .put(API_URL + "keranjangs/" + res.data[0].id, keranjang)
-//             .then(() => {
-//               swal({
-//                 title: "Sukses !",
-//                 text: "Sukses Masuk Keranjang! " + keranjang.product.nama,
-//                 icon: "success",
-//                 button: false,
-//                 timer: 1000,
-//               });
-//             })
-//             .catch((error) => {
-//               console.log(error);
+//             //refresh data keranjang setelah tambah
+//             this.getListKeranjang();
+//           })
+//           .catch((error) => {
+//             console.log(error);
+//           });
+//       } else {
+//         // Jika produk sudah ada, update jumlah dan total harga
+//         const keranjang = {
+//           jumlah: res.data[0].jumlah + 1,
+//           total_harga: res.data[0].total_harga + value.harga,
+//           product: value,
+//         };
+
+//         axios
+//           .put(API_URL + "keranjangs/" + res.data[0].id, keranjang)
+//           .then(() => {
+//             swal({
+//               title: "Sukses !",
+//               text: "Sukses Masuk Keranjang! " + keranjang.product.nama ,
+//               icon: "success",
+//               button: false,
+//               timer: 1000,
 //             });
-//         }
+//             //refresh data keranjang setelah update
+//            this.getListKeranjang();
 //       })
 //       .catch((error) => {
 //         console.log(error);
 //       });
 
-        function App () {
-                return (
-                  <BrowserRouter>
-                    <NavbarComp/>
-                    <main>
-                      <Switch>
-                        <Route path = "/" component = {Home} exact />
-                        <Route path = "/Sukses" component ={Sukses} exact/>
-                        <Route path="/RekapTransaksi" component={ RekapTransaksi} exact/>
-                      </Switch>
-                    </main>
-                  </BrowserRouter>
-                );
-              }
-              export default App;
-//   };
+//         }
+//       })
+//       .catch((error) => {
+//         console.log(error);
+//       });
+// /*
+//     const keranjang = {
+//           jumlah: 1,
+//           total_harga: value.harga,
+//           product: value,
+//         };
 
-  
+//         axios
+//           .post(API_URL + "keranjangs", keranjang)
+//           .then((res) => {
+//             swal({
+//               title: "Sukses !",
+//               text: "Sukses Masuk Keranjang! " + keranjang.product.nama,
+//               icon: "success",
+//               button: false,
+//               timer: 1000,
+//               });
+//           this.getListKeranjang();
+//     })
+//     .catch((error) => {
+//       console.log(error);
+//     }); */
+//   }
 
-//   render() {
-//     const { menus, categoriYangDipilih, keranjangs } = this.state;
+// render() {
+//   // console.log(this.state.menus);
+//   const { menus, categoryYangDipilih, keranjangs } = this.state;
+//   return (
+//     <div className="App">
+//       <NavbarComp />
+//       <div className="mt-3">
+//         <Container fluid>
+//           <Row>
+//             <ListCategory
+//               changeCategory={this.changeCategory}
+//               categoryYangDipilih={categoryYangDipilih}
+//             />
+//             <Col>
+//               <h5>
+//                 <strong>Daftar Produk</strong>
+//               </h5>
+//               <hr />
+//               <Row>
+//                 {menus &&
+//                   menus.map((menu) => (
+//                     //<h5>{menu.nama}</h5>
+//                     <Menus
+//                     key={menu.id}
+//                     menu={menu}
+//                     masukkeranjang={this.masukkeranjang}
+//                     />
+//                   ))}
+//               </Row>
+//             </Col>
+//           <Hasil keranjangs={keranjangs} hapusKeranjang={this.hapusKeranjang}/>
 
-//     return (
-//       <div className="App">
-//         <NavbarComp />
-//         <div className="mt-3">
-//           <Container fluid>
-//             <Row>
-//               <ListCategory
-//                 changeCategory={this.changeCategory}
-//                 categoriYangDipilih={categoriYangDipilih}
-//               />
-//               <Col>
-//                 <h5>
-//                   <strong>Daftar Produk</strong>
-//                 </h5>
-//                 <hr />
-//                 <Row>
-//                   {menus &&
-//                     menus.map((menu) => (
-//                       <Menus
-//                         key={menu.id}
-//                         menu={menu}
-//                         masukkeranjang={this.masukkeranjang}
-//                       />
-//                     ))}
-//                 </Row>
-//               </Col>
-//               <Hasil keranjangs={keranjangs} />
-//             </Row>
-//           </Container>
-//         </div>
+//         </Row>
+//       </Container>
 //       </div>
-//     );
+//       </div>
+//     )
 //   }
 // }

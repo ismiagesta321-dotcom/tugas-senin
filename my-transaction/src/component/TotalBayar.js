@@ -8,17 +8,36 @@ import { API_URL } from "../utils/constants";
 import { withRouter } from "react-router-dom"; // ⬅️ tambahkan ini
 
 class TotalBayar extends Component {
-  submitTotalBayar = (totalBayar) => {
+  submitTotalBayar = async (totalBayar) => {
+  try {
+    // 1. update stok semua produk
+    for (const item of this.props.keranjangs) {
+      const productId = item.product.id;
+      const stokLama = item.product.stok;
+      const jumlahBeli = item.jumlah;
+      const stokBaru = stokLama - jumlahBeli;
+
+      await axios.patch(`${API_URL}product/${productId}`, {
+        stok: stokBaru
+      });
+    }
+
+    // 2. simpan pesanan ke tabel pesanans
     const pesanan = {
       total_bayar: totalBayar,
       menus: this.props.keranjangs,
-     tanggal: new Date().toISOString(),
+      tanggal: new Date().toISOString(),
     };
 
-    axios.post(API_URL + "pesanans", pesanan).then(() => {
-      this.props.history.push("/Sukses"); // ✅ sekarang bisa jalan
-    });
-  };
+    await axios.post(API_URL + "pesanans", pesanan);
+
+    // 3. redirect ke halaman sukses
+    this.props.history.push("/Sukses");
+  } catch (error) {
+    console.error("Gagal menyelesaikan pesanan:", error);
+  }
+};
+
 
   render() {
     const totalBayar = this.props.keranjangs.reduce(
